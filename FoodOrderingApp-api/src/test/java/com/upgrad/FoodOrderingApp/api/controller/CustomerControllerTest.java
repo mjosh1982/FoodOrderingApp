@@ -267,7 +267,7 @@ public class CustomerControllerTest {
     // ----------------------------- PUT /customer --------------------------------
 
     //This test case passes when you are able to update customer details successfully.
-    /*@Test
+    @Test
     public void shouldUpdateCustomerDetails() throws Exception {
         final CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setFirstName("firstname");
@@ -280,7 +280,7 @@ public class CustomerControllerTest {
         updatedCustomerEntity.setFirstName("first");
         updatedCustomerEntity.setLastName("last");
         updatedCustomerEntity.setUuid(customerId);
-        when(mockCustomerService.updateCustomer(customerEntity)).thenReturn(updatedCustomerEntity);
+        when(mockCustomerService.updateCustomerDetails(customerEntity)).thenReturn(updatedCustomerEntity);
         mockMvc
                 .perform(put("/customer")
                         .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -289,7 +289,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").value(customerId));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(1)).updateCustomer(customerEntity);
+        verify(mockCustomerService, times(1)).updateCustomerDetails(customerEntity);
     }
 
     //This test case passes when you have handled the exception of trying to update user details but the first name
@@ -304,7 +304,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("code").value("UCR-002"));
         verify(mockCustomerService, times(0)).getCustomer(anyString());
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update customer details when the customer
@@ -322,7 +322,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update customer details while you are
@@ -340,7 +340,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-002"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update customer details while your session
@@ -358,7 +358,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-003"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     // ----------------------------- PUT /customer/password --------------------------------
@@ -396,7 +396,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("code").value("UCR-003"));
         verify(mockCustomerService, times(0)).getCustomer(anyString());
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update your password when your new password
@@ -411,7 +411,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("code").value("UCR-003"));
         verify(mockCustomerService, times(0)).getCustomer(anyString());
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update your password but you are not
@@ -429,7 +429,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update your password but you are already
@@ -446,7 +446,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-002"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update your password but your session is
@@ -463,7 +463,7 @@ public class CustomerControllerTest {
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("code").value("ATHR-003"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
-        verify(mockCustomerService, times(0)).updateCustomer(any());
+        verify(mockCustomerService, times(0)).updateCustomerDetails(any());
     }
 
     //This test case passes when you have handled the exception of trying to update your password while your new
@@ -483,5 +483,5 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("code").value("UCR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
-    }*/
+    }
 }

@@ -15,9 +15,9 @@ import javax.persistence.PersistenceContext;
 @Repository
 public class CustomerDao {
 
-    public static final String CUSTOMER_BY_CONTACT_NUMBER = "customerByContactNumber";
-    public static final String CUSTOMER_BY_PASSWORD = "customerByPassword";
-    public static final String CUSTOMER_BY_ACCESS_TOKEN = "customerByAccessToken";
+    private static final String CUSTOMER_BY_CONTACT_NUMBER = "customerByContactNumber";
+    private static final String CUSTOMER_BY_PASSWORD = "customerByPassword";
+    private static final String CUSTOMER_BY_ACCESS_TOKEN = "customerByAccessToken";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -29,7 +29,7 @@ public class CustomerDao {
      * @return created customer Object
      */
 
-    public CustomerEntity createUser(CustomerEntity entity) {
+    public CustomerEntity createUpdateUser(CustomerEntity entity) {
         entityManager.persist(entity);
         return entity;
     }
