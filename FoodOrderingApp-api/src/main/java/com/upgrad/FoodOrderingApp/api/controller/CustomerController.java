@@ -3,12 +3,14 @@ package com.upgrad.FoodOrderingApp.api.controller;
 
 import com.fasterxml.jackson.databind.introspect.TypeResolutionContext;
 import com.upgrad.FoodOrderingApp.api.model.LoginResponse;
+import com.upgrad.FoodOrderingApp.api.model.LogoutResponse;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerRequest;
 import com.upgrad.FoodOrderingApp.api.model.SignupCustomerResponse;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,6 +33,7 @@ public class CustomerController {
 
     public static final String CUSTOMER_SUCCESSFULLY_REGISTERED = "CUSTOMER SUCCESSFULLY REGISTERED";
     private static final String SIGNIN_MESSAGE = "SIGNED IN SUCCESSFULLY";
+    private static final String SIGNED_OUT_SUCCESSFULLY = "SIGNED OUT SUCCESSFULLY";
 
 
     @Autowired
@@ -85,12 +88,17 @@ public class CustomerController {
             decodedText = new String(decode);
             decodedArray = decodedText.split(":");
         } catch (IllegalArgumentException e) {
-            throw new AuthenticationFailedException("ATH-003", "Incorrect format of decoded customer name and password");
+//            throw new AuthenticationFailedException("ATH-003", "Incorrect format of decoded customer name and password");
+            return new ResponseEntity<>(new LoginResponse().id("ATH-003").message("Incorrect format of decoded customer name and password"), new HttpHeaders(), HttpStatus.BAD_REQUEST);
         } catch (ArrayIndexOutOfBoundsException aexp) {
-            throw new AuthenticationFailedException("ATH-003", "Incorrect format of decoded customer name and password");
+            return new ResponseEntity<>(new LoginResponse().id("ATH-003").message("Incorrect format of decoded customer name and password"), new HttpHeaders(), HttpStatus.BAD_REQUEST);
         }
-
-        CustomerAuthEntity custAuthToken = customerService.authenticate(decodedArray[0], decodedArray[1]);
+        CustomerAuthEntity custAuthToken = null;
+        try {
+            custAuthToken = customerService.authenticate(decodedArray[0], decodedArray[1]);
+        } catch (AuthenticationFailedException exp) {
+            return new ResponseEntity<>(new LoginResponse().id(exp.getCode()).message(exp.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        }
         CustomerEntity user = custAuthToken.getCustomer();
         LoginResponse authorizedCustomerResponse = new LoginResponse().id(user.getUuid()).
                 message(SIGNIN_MESSAGE).
@@ -101,6 +109,33 @@ public class CustomerController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("access-token", custAuthToken.getAccessToken());
         return new ResponseEntity<>(authorizedCustomerResponse, headers, HttpStatus.OK);
+    }
+
+
+    /**
+     * Rest Endpoint method implementation used for signing out user using the access token passed as parameter.
+     * If access token is valid or available then SignOutRestrictedException is thrown.
+     *
+     * @param accessToken accesstoken passed as String
+     * @return ResponseEntity object containing SignoutResponse object
+     * @throws AuthorizationFailedException exception thrown in case of no acess token found.
+     */
+    @RequestMapping(method = RequestMethod.POST, path = "customer/logout", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<LogoutResponse> signout(@RequestHeader final String accessToken) throws AuthorizationFailedException {
+        LogoutResponse signOutResponse = null;
+        LogoutResponse errorResponse = null;
+        CustomerEntity userEntity = null;
+        try {
+            userEntity = customerService.logout(accessToken);
+        } catch (AuthorizationFailedException exp) {
+            errorResponse = new LogoutResponse().message(exp.getErrorMessage()).id(exp.getCode());
+        }
+        if (errorResponse != null && !errorResponse.getMessage().trim().isEmpty()) {
+            signOutResponse = new LogoutResponse().message(errorResponse.getMessage()).id(errorResponse.getId());
+        } else {
+            signOutResponse = new LogoutResponse().id(userEntity.getUuid()).message(SIGNED_OUT_SUCCESSFULLY);
+        }
+        return new ResponseEntity<>(signOutResponse, HttpStatus.OK);
     }
 
 }

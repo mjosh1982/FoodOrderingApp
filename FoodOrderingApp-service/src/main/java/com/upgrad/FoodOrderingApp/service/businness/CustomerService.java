@@ -4,6 +4,7 @@ import com.upgrad.FoodOrderingApp.service.dao.CustomerDao;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
+import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
 import com.upgrad.FoodOrderingApp.service.util.EmailValidator;
 import com.upgrad.FoodOrderingApp.service.util.PasswordValidator;
@@ -148,6 +149,35 @@ public class CustomerService {
             return authEntity;
         } else {
             throw new AuthenticationFailedException("(ATH-002", "Invalid Credentials");
+        }
+    }
+
+
+    /**
+     * method used by customer to log out from the application.
+     *
+     * @param accessToken accestoken through which used has logged in
+     * @return logout customerEntiry object
+     * @throws AuthorizationFailedException exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity logout(String accessToken) throws AuthorizationFailedException {
+        CustomerAuthEntity customerAuthEntity = customerDao.getCustomerByAccessToken(accessToken);
+        if (customerAuthEntity == null) {
+            //if access token does not exist then throw ATHR-001
+            throw new AuthorizationFailedException("ATHR-001", "Customer is not Logged in.");
+        } else if (customerAuthEntity != null && customerAuthEntity.getLogoutAt() != null) {
+            //if customer with this accestoken has already logged out then throw ATHR-002
+            throw new AuthorizationFailedException("ATHR-002", "Customer is logged out. Log in again to access this endpoint.");
+        } else if (customerAuthEntity != null && ZonedDateTime.now().isAfter(customerAuthEntity.getExpiresAt())) {
+            //if expiry date of this token is already past the current date then throw ATHR-003
+            throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
+        } else {
+            //update the logout date for this accesstoken
+            final ZonedDateTime logoutAtDate = ZonedDateTime.now();
+            customerAuthEntity.setLogoutAt(logoutAtDate);
+            customerDao.updateLogOutDate(customerAuthEntity);
+            return customerAuthEntity.getCustomer();
         }
     }
 }

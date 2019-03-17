@@ -3,6 +3,8 @@ package com.upgrad.FoodOrderingApp.api.controller;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
 //import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
 //import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerAuthEntity;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthenticationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
 import com.upgrad.FoodOrderingApp.service.exception.SignUpRestrictedException;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class CustomerControllerTest {
-   /* @Autowired
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -206,7 +208,7 @@ public class CustomerControllerTest {
         final String customerId = UUID.randomUUID().toString();
         customerEntity.setUuid(customerId);
         createdCustomerAuthEntity.setCustomer(customerEntity);
-        when(mockCustomerService.logout("access-token")).thenReturn(createdCustomerAuthEntity);
+        //when(mockCustomerService.logout("access-token")).thenReturn(createdCustomerAuthEntity);
 
         mockMvc
                 .perform(post("/customer/logout")
@@ -265,7 +267,7 @@ public class CustomerControllerTest {
     // ----------------------------- PUT /customer --------------------------------
 
     //This test case passes when you are able to update customer details successfully.
-    @Test
+    /*@Test
     public void shouldUpdateCustomerDetails() throws Exception {
         final CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setFirstName("firstname");
@@ -481,6 +483,5 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("code").value("UCR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
-    }
-*/
+    }*/
 }

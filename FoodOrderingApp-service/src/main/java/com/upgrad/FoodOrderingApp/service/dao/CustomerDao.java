@@ -17,6 +17,7 @@ public class CustomerDao {
 
     public static final String CUSTOMER_BY_CONTACT_NUMBER = "customerByContactNumber";
     public static final String CUSTOMER_BY_PASSWORD = "customerByPassword";
+    public static final String CUSTOMER_BY_ACCESS_TOKEN = "customerByAccessToken";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -76,5 +77,31 @@ public class CustomerDao {
     public CustomerAuthEntity createAuthToken(CustomerAuthEntity authEntity) {
         entityManager.persist(authEntity);
         return authEntity;
+    }
+
+    /**
+     * method used to get customerentity object based on the Accesstoken provided
+     *
+     * @param accessToken accesstoken of the user
+     * @return CustomerAuthEntity object
+     */
+    public CustomerAuthEntity getCustomerByAccessToken(String accessToken) {
+        try {
+            return entityManager.createNamedQuery(CUSTOMER_BY_ACCESS_TOKEN, CustomerAuthEntity.class).
+                    setParameter("accessToken", accessToken)
+                    .getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        }
+    }
+
+
+    /**
+     * method used for updating logout date in the CustomerAuth entity object of the customer
+     *
+     * @param customerAuthEntity object to be updated.
+     */
+    public void updateLogOutDate(CustomerAuthEntity customerAuthEntity) {
+        entityManager.persist(customerAuthEntity);
     }
 }
