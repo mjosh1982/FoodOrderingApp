@@ -9,13 +9,19 @@ import java.util.regex.Pattern;
 public class PhoneValidator {
 
     private static final String PHONE_PATTERN = "\\d{10}";
-    Pattern pattern;
-    Matcher matcher;
+    private Pattern pattern;
+    private Matcher matcher;
 
     public PhoneValidator() {
         pattern = Pattern.compile(PHONE_PATTERN);
     }
 
+    /**
+     * method used to validate the phoneNumber
+     *
+     * @param phoneNumber string be validated
+     * @return true if valid pincode else false.
+     */
     public boolean validate(final String phoneNumber) {
         matcher = pattern.matcher(phoneNumber);
         return matcher.matches();

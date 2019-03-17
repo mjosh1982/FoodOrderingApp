@@ -68,7 +68,7 @@ public class OrderControllerTest {
         when(mockPaymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString()))
                 .thenReturn(new PaymentEntity());
         when(mockAddressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity))
-                .thenReturn(new AddressEntity());
+                .thenReturn(new Address());
         when(mockRestaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString()))
                 .thenReturn(new RestaurantEntity());
         when(mockOrderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString()))
@@ -282,7 +282,7 @@ public class OrderControllerTest {
         when(mockPaymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString()))
                 .thenReturn(new PaymentEntity());
         when(mockAddressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity))
-                .thenReturn(new AddressEntity());
+                .thenReturn(new Address());
         when(mockRestaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString()))
                 .thenThrow(new RestaurantNotFoundException("RNF-001", "No restaurant by this id"));
 
@@ -320,7 +320,7 @@ public class OrderControllerTest {
         when(mockPaymentService.getPaymentByUUID(saveOrderRequest.getPaymentId().toString()))
                 .thenReturn(new PaymentEntity());
         when(mockAddressService.getAddressByUUID(saveOrderRequest.getAddressId(), customerEntity))
-                .thenReturn(new AddressEntity());
+                .thenReturn(new Address());
         when(mockRestaurantService.restaurantByUUID(saveOrderRequest.getRestaurantId().toString()))
                 .thenReturn(new RestaurantEntity());
         when(mockOrderService.getCouponByCouponId(saveOrderRequest.getCouponId().toString()))
@@ -375,7 +375,7 @@ public class OrderControllerTest {
         assertEquals(customerOrderResponse.getOrders().get(0).getId().toString(), orderEntity.getUuid());
         assertEquals(customerOrderResponse.getOrders().get(0).getCustomer().getId().toString(), orderEntity.getCustomer().getUuid());
         assertEquals(customerOrderResponse.getOrders().get(0).getAddress().getId().toString(), orderEntity.getAddress().getUuid());
-        assertEquals(customerOrderResponse.getOrders().get(0).getAddress().getState().getId().toString(), orderEntity.getAddress().getState().getUuid());
+        assertEquals(customerOrderResponse.getOrders().get(0).getAddress().getStateEntity().getId().toString(), orderEntity.getAddress().getStateEntity().getUuid());
 
         verify(mockCustomerService, times(1)).getCustomer("database_accesstoken2");
         verify(mockOrderService, times(1)).getOrdersByCustomers(customerId);
@@ -580,7 +580,7 @@ public class OrderControllerTest {
         final StateEntity stateEntity = new StateEntity(stateId, "someState");
 
         final String addressId = UUID.randomUUID().toString();
-        final AddressEntity addressEntity = new AddressEntity(addressId, "a/b/c",
+        final Address addressEntity = new Address(addressId, "a/b/c",
                 "someLocality", "someCity", "100000", stateEntity);
 
         final String couponId = UUID.randomUUID().toString();
