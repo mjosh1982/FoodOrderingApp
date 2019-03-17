@@ -137,7 +137,7 @@ public class RestaurantControllerTest {
         final RestaurantList restaurantList = restaurantListResponse.getRestaurants().get(0);
         assertEquals(restaurantList.getId().toString(), restaurantEntity.getUuid());
         assertEquals(restaurantList.getAddress().getId().toString(), restaurantEntity.getAddress().getUuid());
-        assertEquals(restaurantList.getAddress().getState().getId().toString(), restaurantEntity.getAddress().getState().getUuid());
+        assertEquals(restaurantList.getAddress().getStateEntity().getId().toString(), restaurantEntity.getAddress().getStateEntity().getUuid());
 
         verify(mockRestaurantService, times(1)).restaurantsByName("someRestaurantName");
         verify(mockCategoryService, times(1)).getCategoriesByRestaurant(restaurantEntity.getUuid());
@@ -182,7 +182,7 @@ public class RestaurantControllerTest {
         final RestaurantList restaurantList = restaurantListResponse.getRestaurants().get(0);
         assertEquals(restaurantList.getId().toString(), restaurantEntity.getUuid());
         assertEquals(restaurantList.getAddress().getId().toString(), restaurantEntity.getAddress().getUuid());
-        assertEquals(restaurantList.getAddress().getState().getId().toString(), restaurantEntity.getAddress().getState().getUuid());
+        assertEquals(restaurantList.getAddress().getStateEntity().getId().toString(), restaurantEntity.getAddress().getStateEntity().getUuid());
 
         verify(mockRestaurantService, times(1)).restaurantByCategory("someCategoryId");
         verify(mockCategoryService, times(1)).getCategoriesByRestaurant(restaurantEntity.getUuid());
@@ -241,7 +241,7 @@ public class RestaurantControllerTest {
         final RestaurantList restaurantList = restaurantListResponse.getRestaurants().get(0);
         assertEquals(restaurantList.getId().toString(), restaurantEntity.getUuid());
         assertEquals(restaurantList.getAddress().getId().toString(), restaurantEntity.getAddress().getUuid());
-        assertEquals(restaurantList.getAddress().getState().getId().toString(), restaurantEntity.getAddress().getState().getUuid());
+        assertEquals(restaurantList.getAddress().getStateEntity().getId().toString(), restaurantEntity.getAddress().getStateEntity().getUuid());
 
         verify(mockRestaurantService, times(1)).restaurantsByRating();
         verify(mockCategoryService, times(1)).getCategoriesByRestaurant(restaurantEntity.getUuid());
@@ -451,7 +451,7 @@ public class RestaurantControllerTest {
         final String stateId = UUID.randomUUID().toString();
         final StateEntity stateEntity = new StateEntity(stateId, "someState");
         final String addressId = UUID.randomUUID().toString();
-        final AddressEntity addressEntity = new AddressEntity(addressId, "a/b/c", "someLocality", "someCity", "100000", stateEntity);
+        final Address addressEntity = new Address(addressId, "a/b/c", "someLocality", "someCity", "100000", stateEntity);
 
         final RestaurantEntity restaurantEntity = new RestaurantEntity();
         final String restaurantId = UUID.randomUUID().toString();

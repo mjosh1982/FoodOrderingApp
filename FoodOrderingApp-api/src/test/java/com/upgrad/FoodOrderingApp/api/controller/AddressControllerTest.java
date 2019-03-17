@@ -7,12 +7,11 @@ import com.upgrad.FoodOrderingApp.api.model.StatesList;
 import com.upgrad.FoodOrderingApp.api.model.StatesListResponse;
 import com.upgrad.FoodOrderingApp.service.businness.AddressService;
 import com.upgrad.FoodOrderingApp.service.businness.CustomerService;
-//import com.upgrad.FoodOrderingApp.service.entity.AddressEntity;
-//import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
-//import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
-import com.upgrad.FoodOrderingApp.service.exception.AddressNotFoundException;
+import com.upgrad.FoodOrderingApp.service.businness.StateService;
+import com.upgrad.FoodOrderingApp.service.entity.Address;
+import com.upgrad.FoodOrderingApp.service.entity.CustomerEntity;
+import com.upgrad.FoodOrderingApp.service.entity.StateEntity;
 import com.upgrad.FoodOrderingApp.service.exception.AuthorizationFailedException;
-import com.upgrad.FoodOrderingApp.service.exception.SaveAddressException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +22,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collections;
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,17 +47,20 @@ public class AddressControllerTest {
     @MockBean
     private CustomerService mockCustomerService;
 
+    @MockBean
+    private StateService mockStateService;
+
     // ------------------------------------------ POST /address ------------------------------------------
 
     //This test case passes when the address is successfully saved.
     @Test
     public void shouldSaveAddress() throws Exception {
-//        when(mockCustomerService.getCustomer("database_accesstoken2")).thenReturn(new CustomerEntity());
-//        when(mockAddressService.getStateByUUID("testUUID")).thenReturn(new StateEntity());
-//
-//        final AddressEntity addressEntity = new AddressEntity();
-//        addressEntity.setUuid("randomUuid001");
-//        when(mockAddressService.saveAddress(any(), any())).thenReturn(addressEntity);
+        when(mockCustomerService.getCustomer("database_accesstoken2")).thenReturn(new CustomerEntity());
+        when(mockStateService.getStateByUUID("testUUID")).thenReturn(new StateEntity());
+
+        final Address address = new Address();
+        address.setUuid("randomUuid001");
+        //when(mockAddressService.saveAddress(any(), any())).thenReturn(address);
 
         mockMvc
                 .perform(post("/address?content=my_address")
@@ -191,10 +192,10 @@ public class AddressControllerTest {
 //        final CustomerEntity customerEntity = new CustomerEntity();
 //        when(mockCustomerService.getCustomer("database_accesstoken2")).thenReturn(customerEntity);
 //
-//        final AddressEntity addressEntity = new AddressEntity();
+//        final Address addressEntity = new Address();
 //        when(mockAddressService.getAddressByUUID("82849cd5-106e-4b34-b9bf-94954c6ff527", customerEntity)).thenReturn(addressEntity);
 //
-//        final AddressEntity deletedAddressEntity = new AddressEntity();
+//        final Address deletedAddressEntity = new Address();
 //        final String uuid = UUID.randomUUID().toString();
 //        deletedAddressEntity.setUuid(uuid);
 //        when(mockAddressService.deleteAddress(addressEntity)).thenReturn(deletedAddressEntity);
@@ -313,7 +314,7 @@ public class AddressControllerTest {
 //        final CustomerEntity customerEntity = new CustomerEntity();
 //        when(mockCustomerService.getCustomer("database_accesstoken2")).thenReturn(customerEntity);
 //
-//        final AddressEntity addressEntity = new AddressEntity();
+//        final Address addressEntity = new Address();
 //        final String addressUuid = UUID.randomUUID().toString();
 //        addressEntity.setUuid(addressUuid);
 //        addressEntity.setPincode("100000");
@@ -321,7 +322,7 @@ public class AddressControllerTest {
 //        addressEntity.setLocality("locality");
 //        addressEntity.setFlatBuilNo("flatBuildNo");
 //        final String stateUuid = UUID.randomUUID().toString();
-//        addressEntity.setState(new StateEntity(stateUuid, "state"));
+//        addressEntity.setStateEntity(new StateEntity(stateUuid, "state"));
 //        when(mockAddressService.getAllAddress(customerEntity)).thenReturn(Collections.singletonList(addressEntity));
 
         final String response = mockMvc
@@ -332,13 +333,13 @@ public class AddressControllerTest {
                 .andReturn().getResponse().getContentAsString();
 
         final AddressListResponse addressLists = new ObjectMapper().readValue(response, AddressListResponse.class);
-//        assertEquals(addressLists.getAddresses().size(), 1);
+        assertEquals(addressLists.getAddresses().size(), 1);
 
         final AddressList addressList = addressLists.getAddresses().get(0);
-//        assertEquals(addressList.getFlatBuildingName(), "flatBuildNo");
-//        assertEquals(addressList.getLocality(), "locality");
-//        assertEquals(addressList.getPincode(), "100000");
-//        assertEquals(addressList.getCity(), "city");
+        assertEquals(addressList.getFlatBuildingName(), "flatBuildNo");
+        assertEquals(addressList.getLocality(), "locality");
+        assertEquals(addressList.getPincode(), "100000");
+        assertEquals(addressList.getCity(), "city");
 //        assertEquals(addressList.getState().getId().toString(), stateUuid);
 //        assertEquals(addressList.getState().getStateName(), "state");
 //        assertEquals(addressList.getId().toString(), addressUuid);
