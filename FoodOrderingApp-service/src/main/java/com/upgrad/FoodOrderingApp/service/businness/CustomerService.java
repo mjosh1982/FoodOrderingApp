@@ -186,14 +186,69 @@ public class CustomerService {
      * method used for updating customer details into database.
      *
      * @param customerEntity entity object
-     * @param accessToken    accesstoken
-     * @return CustomerEntity object
      * @throws AuthorizationFailedException exception for authorization
      * @throws UpdateCustomerException      exception for updating customer details.
      */
 
     @Transactional(propagation = Propagation.REQUIRED)
-    public CustomerEntity updateCustomerDetails(CustomerEntity customerEntity, String accessToken) throws AuthorizationFailedException, UpdateCustomerException {
+    public CustomerEntity updateCustomerDetails(CustomerEntity customerEntity) throws AuthorizationFailedException, UpdateCustomerException {
+        //CustomerAuthEntity customerAuthEntity = getCustomerAuthEntity(accessToken);
+
+        if (customerEntity.getFirstName().trim().isEmpty()) {
+            throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
+        }
+
+        customerEntity.setFirstName(customerEntity.getFirstName());
+        customerEntity.setLastName(customerEntity.getLastName());
+        customerEntity = customerDao.createUpdateUser(customerEntity);
+        return customerEntity;
+    }
+
+
+    /**
+     * method used for updating the password of a customer.
+     * It takes the oldPassword, newpassword, authenticates customer through accesstoken and
+     * returns back the updated customer entity object
+     *
+     * @param entity      customerEntity object
+     * @param oldPassword oldpassword in string
+     * @param newPassword newpasword in string
+     * @return updated customer entity object
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerEntity updateCustomerPassword(String oldPassword, String newPassword, CustomerEntity entity) throws UpdateCustomerException, AuthorizationFailedException {
+        if (oldPassword.trim().isEmpty() || newPassword.trim().isEmpty()) {
+            throw new UpdateCustomerException("UCR-003", "No field should be empty");
+        }
+        //check if the new password is good for savings considering the restrictions.
+        PasswordValidator validator = new PasswordValidator();
+        boolean validate = validator.validate(newPassword);
+        if (validate) {
+            //This implies new password is ok for updating in database. before that make sure old password provided is right
+            String encryptedPwd = PasswordCryptographyProvider.encrypt(oldPassword, entity.getSalt());
+            if (encryptedPwd.equals(entity.getPassword())) {
+                //create encrypted password to be stored on database.
+                String newEncryptPaswd = PasswordCryptographyProvider.encrypt(newPassword, entity.getSalt());
+                entity.setPassword(newEncryptPaswd);
+                customerDao.createUpdateUser(entity);
+            } else {
+                throw new UpdateCustomerException("UCR-004", "Incorrect old password!");
+            }
+        } else {
+            throw new UpdateCustomerException("UCR-001", "Weak password!");
+        }
+        return entity;
+    }
+
+    /**
+     * helper method to check the authentication of user through accesstoken
+     *
+     * @param accessToken token of the customer
+     * @return CustomerAuthentity object
+     * @throws AuthorizationFailedException exception
+     */
+    @Transactional(propagation = Propagation.REQUIRED)
+    public CustomerAuthEntity getCustomerAuthEntity(String accessToken) throws AuthorizationFailedException {
         CustomerAuthEntity customerAuthEntity = customerDao.getCustomerByAccessToken(accessToken);
         if (customerAuthEntity == null) {
             //if access token does not exist then throw ATHR-001
@@ -205,14 +260,8 @@ public class CustomerService {
             //if expiry date of this token is already past the current date then throw ATHR-003
             throw new AuthorizationFailedException("ATHR-003", "Your session is expired. Log in again to access this endpoint.");
         }
-
-        if (customerEntity.getFirstName().trim().isEmpty()) {
-            throw new UpdateCustomerException("UCR-002", "First name field should not be empty");
-        }
-        CustomerEntity entity = customerAuthEntity.getCustomer();
-        entity.setFirstName(customerEntity.getFirstName());
-        entity.setLastName(customerEntity.getLastName());
-        entity = customerDao.createUpdateUser(entity);
-        return entity;
+        return customerAuthEntity;
     }
+
+
 }

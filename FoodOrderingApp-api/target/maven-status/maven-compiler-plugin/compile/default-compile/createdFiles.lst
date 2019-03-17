@@ -44,6 +44,7 @@ io/swagger/RFC3339DateFormat.class
 io/swagger/api/ApiException.class
 com/upgrad/FoodOrderingApp/api/model/RestaurantListResponse.class
 com/upgrad/FoodOrderingApp/api/model/DeleteAddressResponse.class
+com/upgrad/FoodOrderingApp/api/controller/AddressController.class
 com/upgrad/FoodOrderingApp/api/model/StatesListResponse.class
 com/upgrad/FoodOrderingApp/api/model/PaymentResponse.class
 com/upgrad/FoodOrderingApp/api/model/ItemQuantity.class

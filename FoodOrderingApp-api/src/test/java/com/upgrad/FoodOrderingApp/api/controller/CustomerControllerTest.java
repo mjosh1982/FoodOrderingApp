@@ -267,7 +267,7 @@ public class CustomerControllerTest {
     // ----------------------------- PUT /customer --------------------------------
 
     //This test case passes when you are able to update customer details successfully.
-    /*@Test
+    @Test
     public void shouldUpdateCustomerDetails() throws Exception {
         final CustomerEntity customerEntity = new CustomerEntity();
         customerEntity.setFirstName("firstname");
@@ -483,5 +483,5 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("code").value("UCR-001"));
         verify(mockCustomerService, times(1)).getCustomer("auth");
         verify(mockCustomerService, times(1)).updateCustomerPassword("oldPwd", "newPwd", customerEntity);
-    }*/
+    }
 }
